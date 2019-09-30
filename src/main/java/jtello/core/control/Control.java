@@ -1,47 +1,90 @@
 package jtello.core.control;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
+
 import jtello.core.communication.Communication;
 
-public class Control {
+/**
+ * Implements the Flying interface to control the drone
+ * @author Ariel
+ *
+ */
+public class Control implements Fliying {
 
-	Communication conn = new Communication();
+	private final Communication conn;
 
-	public Control() {
+	public Control(Communication communication) {
+		this.conn = communication;
+	}
+	
+	public boolean commandAndVideoStream() {
+		List<Supplier<Boolean>> commands = Arrays.asList(this::command, this::videoStreamOn);
+		return commands.stream().map(Supplier::get).allMatch(i -> i);
 	}
 
-	public Control connect() {
-		conn.connect();
-		return command().videoStreamOn();
+	boolean command() {
+		return conn.executeCommand(TelloCommandValues.COMMAND_MODE);
 	}
 
-	public Control command() {
-		conn.executeCommand(TelloCommandValues.COMMAND_MODE);
-		return this;
+	boolean videoStreamOn() {
+		return conn.executeCommand(TelloCommandValues.ENABLE_VIDEO_STREAM);
 	}
 
-	public Control videoStreamOn() {
-		conn.executeCommand(TelloCommandValues.ENABLE_VIDEO_STREAM);
-		return this;
+	@Override
+	public boolean takeOff() {
+		return conn.executeCommand(TelloCommandValues.TAKE_OFF);
 	}
 
-	public Control takeOff() {
-		conn.executeCommand(TelloCommandValues.TAKE_OFF);
-		return this;
+	@Override
+	public boolean land() {
+		return conn.executeCommand(TelloCommandValues.LAND);
 	}
 
-	public Control land() {
-		conn.executeCommand(TelloCommandValues.LAND);
-		return this;
+	@Override
+	public boolean left(int cm) {
+		return conn.executeCommand(TelloCommandValues.LEFT + " "+cm);
 	}
 
-	public Control left() {
-		conn.executeCommand(TelloCommandValues.LEFT + " 50");
-		return this;
+	@Override
+	public boolean right(int cm) {
+		return conn.executeCommand(TelloCommandValues.RIGHT + " "+cm);
 	}
 
-	public Control right() {
-		conn.executeCommand(TelloCommandValues.RIGHT + " 50");
-		return this;
+	@Override
+	public boolean forward(int cm) {
+		return conn.executeCommand(TelloCommandValues.FORWARD + " "+cm);
 	}
 
+	@Override
+	public boolean back(int cm) {
+		return conn.executeCommand(TelloCommandValues.BACK + " "+cm);
+	}
+
+	@Override
+	public boolean up(int cm) {
+		return conn.executeCommand(TelloCommandValues.UP + " "+cm);
+	}
+
+	@Override
+	public boolean down(int cm) {
+		return conn.executeCommand(TelloCommandValues.DOWN + " "+cm);
+	}
+
+	@Override
+	public boolean rotateRight(int deg) {
+		return conn.executeCommand(TelloCommandValues.CW + " "+deg);
+	}
+
+	@Override
+	public boolean rotateLeft(int deg) {
+		return conn.executeCommand(TelloCommandValues.CCW + " "+deg);
+	}
+
+	@Override
+	public boolean flipForward() {
+		return conn.executeCommand(TelloCommandValues.FLIP + " f");
+	}
+	
 }

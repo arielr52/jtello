@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.65"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="jtello.core.ui.DroneController">
+	<center>
+		<HBox>			
+			<VBox>
+			<style>
+				-fx-padding: 10;
+				-fx-border-width: 3;
+			</style>
+				<Label text="T - take off" />
+				<Label text="L - land" />
+				<Label text="Key UP - forward" />
+				<Label text="Key DOWN - back" />
+				<Label text="Key LEFT - left" />
+				<Label text="Key RIGHT - right" />
+				<Label text="W - up" />
+				<Label text="S - down" />
+				<Label text="A - turn left" />
+				<Label text="D - turn right" />
+			</VBox>
+			<ImageView fx:id="currentFrame" />
+		</HBox>
+	</center>
+	<bottom>
+		<VBox spacing="5">
+			<style>
+				-fx-padding: 10;
+				-fx-border-width: 3;
+				-fx-font-weight: bold;
+			</style>
+			<padding>
+				<Insets bottom="15" left="25" right="25" top="15" />
+			</padding>
+			<children>
+				<HBox>
+					<Label fx:id="commandLabel" alignment="BOTTOM_LEFT" text="" />
+				</HBox>
+				<HBox>
+					<Label fx:id="statusLabel" alignment="BOTTOM_RIGHT" text="" />
+				</HBox>
+			</children>
+		</VBox>
+	</bottom>
+</BorderPane>
