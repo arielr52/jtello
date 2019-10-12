@@ -6,6 +6,8 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
 import org.opencv.core.Core;
 
+import com.sun.javafx.geom.Point2D;
+
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -89,7 +91,7 @@ public class DroneModel extends Application {
 		boolean connected = control.commandAndVideoStream();
 		if (!connected) {
 			log.fatal("Fail to connect to the Drone! exiting");
-			 System.exit(-1);
+			System.exit(-1);
 		}
 
 		primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -97,6 +99,27 @@ public class DroneModel extends Application {
 				executor.submit(() -> executeKeyEvent(control, key));
 			}
 		});
+		
+		ObjDetector objDetector = new ObjDetector();
+		controller.setObjDetector(objDetector);
+		
+		new Thread(() -> {
+			while (true) {
+				objDetector.get().ifPresent(objCenter -> {
+					Point2D frameCenter =  objDetector.getFrameCenter();
+					//20% of screen
+					int offset = (int) (frameCenter.x/10) ;
+					log.debug("objCenter= "+objCenter+", offset="+offset);
+					if(objCenter.x+offset<frameCenter.x) {
+						control.rotateLeft(20);
+					}
+					if(frameCenter.x+offset<objCenter.x) {
+						control.rotateRight(20);
+					}
+				});
+			}
+		}).start();
+
 	}
 
 	private void executeKeyEvent(Control control, KeyEvent key) {
