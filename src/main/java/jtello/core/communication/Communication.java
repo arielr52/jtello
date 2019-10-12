@@ -40,7 +40,7 @@ public class Communication implements Supplier<Optional<FlightStatus>> {
 
 	public static final Integer DRONE_COMMAND_UDP_PORT = 8889;
 	
-	public static final Integer DRONE_COMMAND_SOCKET_TIMEOUT = 1000;
+	public static final Integer DRONE_COMMAND_SOCKET_TIMEOUT = 2000;
 
 	public static final Integer DRONE_STATUS_UDP_PORT = 8890;
 
