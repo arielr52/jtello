@@ -1,5 +1,7 @@
 package jtello.core.control;
 
+import jtello.core.movment.NotValidPositionException;
+
 /**
  * Direction for flying
  * @author Ariel
@@ -7,26 +9,26 @@ package jtello.core.control;
  */
 public interface Fliying {
 
-	boolean takeOff();
+	boolean takeOff() ;
 
 	boolean land();
 
-	boolean left(int cm);
+	boolean left(int cm)throws NotValidPositionException;
 
-	boolean right(int cm);
+	boolean right(int cm)throws NotValidPositionException;
 
-	boolean forward(int cm);
+	boolean forward(int cm)throws NotValidPositionException;
 
-	boolean back(int cm);
+	boolean back(int cm)throws NotValidPositionException;
 
-	boolean up(int cm);
+	boolean up(int cm)throws NotValidPositionException;
 
-	boolean down(int cm);
+	boolean down(int cm)throws NotValidPositionException;
 
 	boolean rotateRight(int deg);
 
 	boolean rotateLeft(int deg);
 
-	boolean flipForward();
+	boolean flipForward() throws NotValidPositionException;
 
 }
