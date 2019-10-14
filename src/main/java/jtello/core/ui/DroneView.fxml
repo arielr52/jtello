@@ -5,18 +5,19 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.65"
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="jtello.core.ui.DroneController">
 	<center>
-		<HBox>			
+		<HBox>
 			<VBox>
-			<style>
-				-fx-padding: 10;
-				-fx-border-width: 3;
-			</style>
+			<padding>
+				<Insets right="10" left="10" />
+			</padding>
 				<Label text="T - take off" />
 				<Label text="L - land" />
 				<Label text="Key UP - forward" />
@@ -27,6 +28,20 @@
 				<Label text="S - down" />
 				<Label text="A - turn left" />
 				<Label text="D - turn right" />
+				<Label fx:id="positionLabel" alignment="BOTTOM_LEFT" text="Estimated location" />
+			<!-- 
+			<Label text="X" />
+			<Slider fx:id="sandboxX" min="-100" max="100" value="0"
+				blockIncrement="20" />
+			<Label text="Y" />
+			<Slider fx:id="sandboxY" min="-100" max="100" value="0"
+				blockIncrement="20" />
+			<Label text="Z" />
+			<Slider fx:id="sandboxZ" min="-100" max="100" value="0"
+				blockIncrement="20" />
+			<CheckBox fx:id="detectObj" onAction="#detectObjSelected"
+				text="Detect Obj" />
+				 -->
 			</VBox>
 			<ImageView fx:id="currentFrame" />
 		</HBox>

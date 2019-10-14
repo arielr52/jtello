@@ -20,6 +20,8 @@ import javafx.stage.WindowEvent;
 import jtello.core.communication.Communication;
 import jtello.core.communication.Video;
 import jtello.core.control.Control;
+import jtello.core.movment.FlightPosition;
+import jtello.core.movment.NotValidPositionException;
 
 /**
  * The UI Model
@@ -35,12 +37,14 @@ public class DroneModel extends Application {
 
 	DroneController controller;
 
+	FlightPosition flightPosition;
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("DroneView.fxml"));
 			BorderPane rootElement = (BorderPane) loader.load();
-			Scene scene = new Scene(rootElement, 1100, 800);
+			Scene scene = new Scene(rootElement, 1200, 800);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setTitle("JTello");
 			primaryStage.setScene(scene);
@@ -53,7 +57,6 @@ public class DroneModel extends Application {
 			}));
 
 			controller = loader.getController();
-
 			startVideo();
 
 			new Thread(() -> controlDrone(primaryStage)).start();
@@ -88,10 +91,11 @@ public class DroneModel extends Application {
 		}).start();
 
 		Control control = new Control(communication);
+		flightPosition = new FlightPosition(control);
 		boolean connected = control.commandAndVideoStream();
 		if (!connected) {
 			log.fatal("Fail to connect to the Drone! exiting");
-			System.exit(-1);
+	//		System.exit(-1);
 		}
 
 		primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -99,21 +103,22 @@ public class DroneModel extends Application {
 				executor.submit(() -> executeKeyEvent(control, key));
 			}
 		});
+
 		
 		ObjDetector objDetector = new ObjDetector();
 		controller.setObjDetector(objDetector);
-		
+
 		new Thread(() -> {
 			while (true) {
 				objDetector.get().ifPresent(objCenter -> {
-					Point2D frameCenter =  objDetector.getFrameCenter();
-					//20% of screen
-					int offset = (int) (frameCenter.x/10) ;
-					log.debug("objCenter= "+objCenter+", offset="+offset);
-					if(objCenter.x+offset<frameCenter.x) {
+					Point2D frameCenter = objDetector.getFrameCenter();
+					// 20% of screen
+					int offset = (int) (frameCenter.x / 10);
+					log.debug("objCenter= " + objCenter + ", offset=" + offset);
+					if (objCenter.x + offset < frameCenter.x) {
 						control.rotateLeft(20);
 					}
-					if(frameCenter.x+offset<objCenter.x) {
+					if (frameCenter.x + offset < objCenter.x) {
 						control.rotateRight(20);
 					}
 				});
@@ -124,38 +129,43 @@ public class DroneModel extends Application {
 
 	private void executeKeyEvent(Control control, KeyEvent key) {
 		log.debug("addEventHandler " + key.getCode());
-		if (key.getCode() == KeyCode.UP) {
-			control.forward(20);
-		}
-		if (key.getCode() == KeyCode.DOWN) {
-			control.back(20);
-		}
-		if (key.getCode() == KeyCode.LEFT) {
-			control.left(20);
-		}
-		if (key.getCode() == KeyCode.RIGHT) {
-			control.right(20);
-		}
-		if (key.getCode() == KeyCode.W) {
-			control.up(20);
-		}
-		if (key.getCode() == KeyCode.S) {
-			control.down(20);
-		}
-		if (key.getCode() == KeyCode.A) {
-			control.rotateLeft(36);
-		}
-		if (key.getCode() == KeyCode.D) {
-			control.rotateRight(36);
-		}
-		if (key.getCode() == KeyCode.T) {
-			control.takeOff();
-		}
-		if (key.getCode() == KeyCode.L) {
-			control.land();
-		}
-		if (key.getCode() == KeyCode.F) {
-			control.flipForward();
+		try {
+			if (key.getCode() == KeyCode.UP) {
+				flightPosition.forward(20);
+			}
+			if (key.getCode() == KeyCode.DOWN) {
+				flightPosition.back(20);
+			}
+			if (key.getCode() == KeyCode.LEFT) {
+				flightPosition.left(20);
+			}
+			if (key.getCode() == KeyCode.RIGHT) {
+				flightPosition.right(20);
+			}
+			if (key.getCode() == KeyCode.W) {
+				flightPosition.up(20);
+			}
+			if (key.getCode() == KeyCode.S) {
+				flightPosition.down(20);
+			}
+			if (key.getCode() == KeyCode.A) {
+				flightPosition.rotateLeft(36);
+			}
+			if (key.getCode() == KeyCode.D) {
+				flightPosition.rotateRight(36);
+			}
+			if (key.getCode() == KeyCode.T) {
+				flightPosition.takeOff();
+			}
+			if (key.getCode() == KeyCode.L) {
+				flightPosition.land();
+			}
+			if (key.getCode() == KeyCode.F) {
+				flightPosition.flipForward();
+			}
+			controller.updatePosition(flightPosition.getPosition());
+		} catch (NotValidPositionException e) {
+			log.warn("Move is not valid " + e);
 		}
 	};
 
