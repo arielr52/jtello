@@ -1,12 +1,12 @@
 package jtello.core.ui;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.opencv.core.Core;
-
-import com.sun.javafx.geom.Point2D;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -33,7 +33,9 @@ public class DroneModel extends Application {
 
 	final static Logger log = Logger.getLogger(DroneModel.class);
 
-	ExecutorService executor = Executors.newFixedThreadPool(5);
+	ExecutorService executor = new ThreadPoolExecutor(1, 1,
+            0L, TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<Runnable>(1));
 
 	DroneController controller;
 
@@ -104,7 +106,7 @@ public class DroneModel extends Application {
 			}
 		});
 
-		
+		/*
 		ObjDetector objDetector = new ObjDetector();
 		controller.setObjDetector(objDetector);
 
@@ -124,7 +126,7 @@ public class DroneModel extends Application {
 				});
 			}
 		}).start();
-
+*/
 	}
 
 	private void executeKeyEvent(Control control, KeyEvent key) {
